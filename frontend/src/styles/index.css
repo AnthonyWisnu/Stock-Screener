@@ -1,0 +1,65 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Scrollbar tipis untuk tabel */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-gray-900;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-600 rounded;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-500;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center gap-1.5 rounded-md bg-brand-600 px-3 py-1.5
+           text-sm font-medium text-white hover:bg-brand-700 focus:outline-none
+           focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 focus:ring-offset-gray-950
+           disabled:opacity-50 disabled:cursor-not-allowed transition-colors;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center gap-1.5 rounded-md px-3 py-1.5
+           text-sm font-medium text-gray-300 hover:bg-gray-800 hover:text-white
+           focus:outline-none focus:ring-2 focus:ring-gray-600
+           disabled:opacity-50 disabled:cursor-not-allowed transition-colors;
+  }
+
+  .input-field {
+    @apply w-full rounded-md border border-gray-700 bg-gray-900 px-3 py-1.5
+           text-sm text-gray-100 placeholder-gray-500
+           focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500
+           disabled:opacity-50;
+  }
+
+  .card {
+    @apply rounded-xl border border-gray-800 bg-gray-900 p-4;
+  }
+
+  .badge-naik {
+    @apply inline-flex items-center rounded px-1.5 py-0.5 text-xs font-medium
+           bg-green-900/40 text-green-400;
+  }
+
+  .badge-turun {
+    @apply inline-flex items-center rounded px-1.5 py-0.5 text-xs font-medium
+           bg-red-900/40 text-red-400;
+  }
+}
