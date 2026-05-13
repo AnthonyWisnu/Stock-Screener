@@ -1,10 +1,10 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 const KOLOM = [
   { key: 'kode_saham',    label: 'Kode',          sortable: true,  align: 'left' },
   { key: 'harga_terakhir', label: 'Harga',         sortable: true,  align: 'right', format: 'harga' },
-  { key: 'rsi_14',        label: 'RSI 14',         sortable: true,  align: 'right', format: 'desimal2' },
+  { key: 'rsi_14',        label: 'RSI 14',         sortable: true,  align: 'right', format: 'rsi' },
   { key: 'macd',          label: 'MACD',           sortable: true,  align: 'right', format: 'desimal4' },
   { key: 'macd_signal',   label: 'MACD Signal',    sortable: true,  align: 'right', format: 'desimal4' },
   { key: 'ema_50',        label: 'EMA 50',         sortable: true,  align: 'right', format: 'harga' },
@@ -12,8 +12,19 @@ const KOLOM = [
   { key: 'bb_upper',      label: 'BB Upper',       sortable: true,  align: 'right', format: 'harga' },
   { key: 'bb_lower',      label: 'BB Lower',       sortable: true,  align: 'right', format: 'harga' },
   { key: 'volume_ratio',  label: 'Vol. Ratio',     sortable: true,  align: 'right', format: 'desimal2' },
-  { key: 'last_updated_at', label: 'Diperbarui',   sortable: true,  align: 'right', format: 'waktu' },
+  { key: 'last_updated_at', label: 'Diperbarui',   sortable: true,  align: 'right', format: 'relatif' },
 ]
+
+function waktuRelatif(isoString) {
+  if (!isoString) return '-'
+  const selisihDetik = Math.floor((Date.now() - new Date(isoString).getTime()) / 1000)
+  if (selisihDetik < 60) return 'baru saja'
+  const menit = Math.floor(selisihDetik / 60)
+  if (menit < 60) return `${menit} mnt lalu`
+  const jam = Math.floor(menit / 60)
+  if (jam < 24) return `${jam} jam lalu`
+  return new Date(isoString).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit' })
+}
 
 function formatNilai(value, format) {
   if (value === null || value === undefined) return <span className="text-gray-600">-</span>
@@ -24,13 +35,10 @@ function formatNilai(value, format) {
       return value.toFixed(2)
     case 'desimal4':
       return value.toFixed(4)
-    case 'waktu': {
-      const d = new Date(value)
-      return d.toLocaleString('id-ID', {
-        day: '2-digit', month: '2-digit', year: '2-digit',
-        hour: '2-digit', minute: '2-digit',
-      })
-    }
+    case 'rsi':
+      return value.toFixed(2)
+    case 'relatif':
+      return waktuRelatif(value)
     default:
       return String(value)
   }
@@ -63,6 +71,13 @@ function SortIcon({ active, order }) {
  */
 export default function TabelScreener({ items, loading, sortBy, sortOrder, onSort }) {
   const navigate = useNavigate()
+
+  // Paksa re-render setiap 60 detik agar kolom "Diperbarui" terupdate
+  const [, setTick] = useState(0)
+  useEffect(() => {
+    const id = setInterval(() => setTick(t => t + 1), 60_000)
+    return () => clearInterval(id)
+  }, [])
 
   return (
     <div className="relative overflow-x-auto rounded-xl border border-gray-800">
@@ -147,8 +162,8 @@ export default function TabelScreener({ items, loading, sortBy, sortOrder, onSor
                 <td className="px-3 py-2.5 text-right font-mono text-gray-300">
                   {formatNilai(saham.indikator?.volume_ratio, 'desimal2')}
                 </td>
-                <td className="px-3 py-2.5 text-right text-gray-500 text-xs">
-                  {formatNilai(saham.last_updated_at, 'waktu')}
+                <td className="px-3 py-2.5 text-right text-gray-400 text-xs whitespace-nowrap">
+                  {waktuRelatif(saham.last_updated_at)}
                 </td>
               </tr>
             ))

@@ -64,21 +64,28 @@ async def run_fetch_cycle() -> None:
             continue
         try:
             nama = next((s.nama_perusahaan for s in stocks if s.kode_saham == kode_saham), "")
+
+            # Normalisasi kolom ke lowercase SEBELUM dipakai di mana pun
+            # yfinance 1.x mengembalikan kolom kapital: Open, High, Low, Close, Volume
+            df_norm = df.copy()
+            df_norm.columns = df_norm.columns.str.lower()
+
             ohlcv_rows = normalize_ohlcv_df(kode_saham, df)
 
             async with session_factory() as session:
                 await upsert_ohlcv_batch(session, ohlcv_rows)
                 await session.commit()
 
-            indicator_result = calculate_latest(kode_saham, df)
+            # Kirim df_norm (kolom lowercase) ke calculator
+            indicator_result = calculate_latest(kode_saham, df_norm)
 
             if indicator_result.timestamp_bar is not None:
                 async with session_factory() as session:
                     await upsert_indicators_batch(session, [indicator_result.to_dict()])
                     await session.commit()
 
-                df_cols = df.columns.str.lower().tolist()
-                harga = float(df["close"].iloc[-1]) if "close" in df_cols else float(df["Close"].iloc[-1])
+                # Ambil harga dari df_norm yang sudah lowercase
+                harga = float(df_norm["close"].iloc[-1])
 
                 latest_row = {
                     "kode_saham": kode_saham,

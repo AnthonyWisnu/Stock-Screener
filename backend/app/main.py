@@ -56,6 +56,22 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
     # 3. Mulai scheduler
     start_scheduler()
 
+    # 4. Bila jam bursa sedang buka saat startup, langsung jalankan satu siklus fetch
+    #    agar data tidak stale setelah backend restart
+    try:
+        from app.core.market_hours import is_market_open
+        from app.scheduler.jobs import run_fetch_cycle
+        import asyncio
+
+        settings = get_settings()
+        if is_market_open(settings.market_timezone):
+            logger.info("Jam bursa sedang buka. Menjalankan siklus fetch awal...")
+            asyncio.create_task(run_fetch_cycle())
+        else:
+            logger.info("Di luar jam bursa. Siklus fetch awal dilewati.")
+    except Exception as exc:
+        logger.error("Gagal menjalankan siklus fetch awal: %s", exc)
+
     try:
         yield
     finally:

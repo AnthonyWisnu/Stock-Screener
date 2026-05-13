@@ -6,7 +6,7 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { fetchDaftarSaham } from '../api/stocksClient.js'
 
 const DEFAULT_PAGE_SIZE = 50
-const REFRESH_INTERVAL_MS = 15 * 60 * 1000 // 15 menit
+const REFRESH_INTERVAL_MS = 5 * 60 * 1000 // 5 menit (sesuai FETCH_INTERVAL_MINUTES di .env)
 
 export function useDaftarSaham() {
   const [items, setItems] = useState([])

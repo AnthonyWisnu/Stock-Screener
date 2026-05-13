@@ -35,7 +35,7 @@ export default function HalamanDaftar() {
         <div>
           <h1 className="text-xl font-semibold text-white">Screener Saham IDX</h1>
           <p className="mt-0.5 text-sm text-gray-500">
-            Data diperbarui setiap 15 menit selama jam bursa (09:00 - 16:00 WIB)
+            Data diperbarui setiap 5 menit selama jam bursa (09:00 - 16:00 WIB)
           </p>
         </div>
         <button

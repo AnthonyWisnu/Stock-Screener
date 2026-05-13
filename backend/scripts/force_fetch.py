@@ -84,21 +84,25 @@ async def main() -> None:
             continue
         try:
             nama = next((s.nama_perusahaan for s in stocks if s.kode_saham == kode_saham), "")
+
+            # Normalisasi kolom ke lowercase (yfinance 1.x pakai kapital)
+            df_norm = df.copy()
+            df_norm.columns = df_norm.columns.str.lower()
+
             ohlcv_rows = normalize_ohlcv_df(kode_saham, df)
 
             async with session_factory() as session:
                 await upsert_ohlcv_batch(session, ohlcv_rows)
                 await session.commit()
 
-            indicator_result = calculate_latest(kode_saham, df)
+            indicator_result = calculate_latest(kode_saham, df_norm)
 
             if indicator_result.timestamp_bar is not None:
                 async with session_factory() as session:
                     await upsert_indicators_batch(session, [indicator_result.to_dict()])
                     await session.commit()
 
-                df_cols = [c.lower() for c in df.columns]
-                harga = float(df["Close"].iloc[-1]) if "Close" in df.columns else float(df["close"].iloc[-1])
+                harga = float(df_norm["close"].iloc[-1])
 
                 latest_row = {
                     "kode_saham": kode_saham,
