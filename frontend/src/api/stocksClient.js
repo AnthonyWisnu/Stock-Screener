@@ -1,6 +1,7 @@
 /**
  * Client HTTP untuk berkomunikasi dengan FastAPI backend.
- * Seluruh request diarahkan ke /api (di-proxy oleh Vite ke localhost:8000).
+ * Seluruh request diarahkan ke /api saat lokal, atau ke VITE_API_BASE_URL
+ * saat frontend dipasang terpisah dari backend.
  *
  * Bila backend tidak tersedia (network error), client otomatis fallback ke
  * data mock agar UI tetap bisa dilihat selama development.
@@ -9,8 +10,10 @@
 import axios from 'axios'
 import { getMockDaftarSaham, getMockDetailSaham } from './mockData.js'
 
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, '') || ''
+
 const client = axios.create({
-  baseURL: '/api',
+  baseURL: apiBaseUrl ? `${apiBaseUrl}/api` : '/api',
   timeout: 8000,
   headers: { 'Content-Type': 'application/json' },
 })

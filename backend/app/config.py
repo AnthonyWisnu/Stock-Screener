@@ -8,8 +8,9 @@ dihentikan dengan pesan error yang menyebut nama variable.
 from __future__ import annotations
 
 from functools import lru_cache
+from typing import Optional
 
-from pydantic import Field, field_validator
+from pydantic import Field, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -24,11 +25,12 @@ class Settings(BaseSettings):
     )
 
     # PostgreSQL
-    postgres_host: str = Field(..., alias="POSTGRES_HOST")
+    database_url_env: Optional[str] = Field(None, alias="DATABASE_URL")
+    postgres_host: Optional[str] = Field(None, alias="POSTGRES_HOST")
     postgres_port: int = Field(5432, alias="POSTGRES_PORT")
-    postgres_db: str = Field(..., alias="POSTGRES_DB")
-    postgres_user: str = Field(..., alias="POSTGRES_USER")
-    postgres_password: str = Field(..., alias="POSTGRES_PASSWORD")
+    postgres_db: Optional[str] = Field(None, alias="POSTGRES_DB")
+    postgres_user: Optional[str] = Field(None, alias="POSTGRES_USER")
+    postgres_password: Optional[str] = Field(None, alias="POSTGRES_PASSWORD")
 
     # Aplikasi
     app_env: str = Field("development", alias="APP_ENV")
@@ -62,9 +64,40 @@ class Settings(BaseSettings):
             )
         return normalized
 
+    @model_validator(mode="after")
+    def _validate_database_config(self) -> "Settings":
+        if self.database_url_env:
+            return self
+
+        missing = [
+            name
+            for name, value in {
+                "POSTGRES_HOST": self.postgres_host,
+                "POSTGRES_DB": self.postgres_db,
+                "POSTGRES_USER": self.postgres_user,
+                "POSTGRES_PASSWORD": self.postgres_password,
+            }.items()
+            if not value
+        ]
+        if missing:
+            raise ValueError(
+                "Konfigurasi database belum lengkap. Isi DATABASE_URL atau variable: "
+                + ", ".join(missing)
+                + "."
+            )
+        return self
+
     @property
     def database_url(self) -> str:
         """URL koneksi async untuk SQLAlchemy/asyncpg."""
+        if self.database_url_env:
+            url = self.database_url_env
+            if url.startswith("postgres://"):
+                return "postgresql+asyncpg://" + url.removeprefix("postgres://")
+            if url.startswith("postgresql://"):
+                return "postgresql+asyncpg://" + url.removeprefix("postgresql://")
+            return url
+
         return (
             f"postgresql+asyncpg://{self.postgres_user}:{self.postgres_password}"
             f"@{self.postgres_host}:{self.postgres_port}/{self.postgres_db}"
