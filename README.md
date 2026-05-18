@@ -2,7 +2,7 @@
 
 Aplikasi web untuk memindai saham yang tercatat di Bursa Efek Indonesia (IDX) berdasarkan indikator teknikal. Data harga diperbarui otomatis setiap 15 menit selama jam bursa, hasil kalkulasi indikator disimpan di PostgreSQL, dan disajikan melalui API FastAPI untuk antarmuka React yang mendukung filter, pengurutan kolom, serta chart candlestick dengan overlay indikator.
 
-Aplikasi ini dirancang untuk deployment di Hostinger menggunakan panel grafis, tanpa kebutuhan akses SSH maupun terminal.
+Aplikasi ini dirancang untuk deployment dengan Supabase PostgreSQL, backend FastAPI di Railway, dan frontend React di GitHub Pages.
 
 ---
 
@@ -16,7 +16,7 @@ Aplikasi ini dirancang untuk deployment di Hostinger menggunakan panel grafis, t
 6. [Struktur Folder Project](#6-struktur-folder-project)
 7. [Indikator Teknikal yang Dihitung](#7-indikator-teknikal-yang-dihitung)
 8. [Instalasi Lokal Singkat](#8-instalasi-lokal-singkat)
-9. [Deployment ke Hostinger](#9-deployment-ke-hostinger)
+9. [Deployment ke Supabase, Railway, dan GitHub Pages](#9-deployment-ke-supabase-railway-dan-github-pages)
 10. [Lisensi dan Catatan Akademik](#10-lisensi-dan-catatan-akademik)
 
 ---
@@ -39,7 +39,7 @@ Seluruh antarmuka dan pesan berbahasa Indonesia. Aplikasi ini dirancang ringan a
 - **Chart candlestick dengan overlay indikator**: EMA 50, EMA 200, BB Upper, BB Lower ditumpuk di chart utama; RSI, MACD, MACD Signal di sub-panel yang sumbu waktunya selaras.
 - **Rentang chart fleksibel**: 1 hari, 5 hari, 1 bulan, 3 bulan.
 - **Bahasa Indonesia penuh** untuk label UI, pesan validasi, dan dokumentasi.
-- **Deployment tanpa SSH**: seluruh langkah dapat dijalankan via Hostinger panel.
+- **Deployment tiga platform**: Supabase untuk database, Railway untuk backend FastAPI, GitHub Pages untuk frontend.
 
 ---
 
@@ -139,11 +139,12 @@ Panah searah: pengguna tidak pernah memicu panggilan yfinance, dan API tidak per
 | Scheduler | APScheduler | Pemicu fetch tiap 15 menit selama jam bursa |
 | Sumber data harga | yfinance | Data OHLCV saham IDX dengan suffix .JK |
 | Library indikator | ta (bukosabino/ta) | RSI, MACD, EMA, Bollinger Band |
-| Database | PostgreSQL 14+ | Penyimpanan OHLCV dan indikator |
+| Database | Supabase PostgreSQL | Penyimpanan OHLCV dan indikator |
 | Driver DB async | asyncpg atau SQLAlchemy 2.0 async | Akses non-blocking |
 | Validasi skema | Pydantic v2 | Validasi request dan response |
 | Logging | Python `logging` ke stdout | Observability di Hostinger log viewer |
-| Deployment | Hostinger panel GUI | Tanpa SSH, tanpa terminal |
+| Deployment backend | Railway | Menjalankan FastAPI |
+| Deployment frontend | GitHub Pages | Hosting SPA React |
 
 Tech stack ini bersifat terkunci. Perubahan hanya dilakukan setelah konfirmasi eksplisit dari pemilik project.
 
@@ -284,21 +285,19 @@ Rincian teknis ada di `docs/` dan akan dilengkapi seiring implementasi task.
 
 ---
 
-## 9. Deployment ke Hostinger
+## 9. Deployment ke Supabase, Railway, dan GitHub Pages
 
-Seluruh deployment dilakukan melalui Hostinger panel, tanpa SSH.
+Deployment production memakai tiga platform.
 
 **Ringkasan langkah:**
 
-1. Siapkan database PostgreSQL lewat fitur database di panel; catat host, port, nama database, user, dan password.
-2. Build frontend secara lokal (`npm run build`), lalu unggah folder `dist/` ke folder web Hostinger via File Manager.
-3. Buat Python App di panel, arahkan ke folder `backend/`, pilih versi Python yang didukung.
-4. Di halaman Python App, tambahkan seluruh environment variable kredensial database dan konfigurasi lain. Nilai mengikuti daftar di `.env.example`.
-5. Install dependency backend lewat tombol "Install requirements" yang disediakan panel (membaca `requirements.txt`).
-6. Jalankan aplikasi; periksa log lewat log viewer panel.
-7. Atur rewrite atau subdomain sehingga frontend dapat mengakses API backend.
+1. Jalankan migration SQL di Supabase.
+2. Deploy folder `backend/` ke Railway.
+3. Isi Railway Variables, terutama `DATABASE_URL`, `CORS_ALLOW_ORIGINS`, dan konfigurasi scheduler.
+4. Deploy frontend dengan GitHub Actions ke GitHub Pages.
+5. Isi repository secret GitHub `VITE_API_BASE_URL` dengan URL backend Railway.
 
-Panduan lengkap disediakan di `docs/deployment-hostinger.md` saat task deployment dikerjakan.
+Panduan lengkap ada di `docs/deployment-supabase-railway-github.md`.
 
 ---
 

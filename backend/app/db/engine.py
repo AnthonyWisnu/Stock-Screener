@@ -25,6 +25,7 @@ def _build_engine() -> AsyncEngine:
     settings = get_settings()
     return create_async_engine(
         settings.database_url,
+        connect_args=settings.database_connect_args,
         echo=settings.app_env == "development",
         pool_size=5,
         max_overflow=10,
@@ -57,9 +58,10 @@ async def init_db() -> None:
     import sqlalchemy
     engine = get_engine()
     s = get_settings()
+    target = "DATABASE_URL" if s.database_url_env else f"{s.postgres_host}:{s.postgres_port}/{s.postgres_db}"
     logger.info(
-        "Pool koneksi database diinisialisasi: %s:%s/%s",
-        s.postgres_host, s.postgres_port, s.postgres_db,
+        "Pool koneksi database diinisialisasi: %s",
+        target,
     )
     async with engine.connect() as conn:
         await conn.execute(sqlalchemy.text("SELECT 1"))

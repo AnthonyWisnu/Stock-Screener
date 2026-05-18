@@ -26,17 +26,18 @@ Tech stack berikut bersifat **terkunci**. Agen **DILARANG** mengganti, menambah,
 | Styling | Tailwind CSS | 3.x |
 | Chart library | Lightweight Charts atau ApexCharts (dipilih saat design) | terbaru stabil |
 | Backend framework | Python FastAPI | 0.110+ |
-| Database | PostgreSQL | 14+ |
+| Database | Supabase PostgreSQL | 14+ |
 | Scheduler | APScheduler | 3.10+ |
 | Sumber data harga | yfinance | terbaru stabil |
 | Library indikator | ta (bukosabino/ta) | 0.11.0 |
 | Driver DB async | asyncpg atau psycopg (async) | terbaru stabil |
 | ORM (opsional) | SQLAlchemy 2.0 async | terbaru stabil |
-| Deployment target | Hostinger (GUI panel saja) | n/a |
+| Deployment backend | Railway | n/a |
+| Deployment frontend | GitHub Pages | n/a |
 
 Aturan tambahan:
 
-- **DILARANG** menambahkan Redis, Celery, RabbitMQ, Kafka, Docker, Kubernetes, Nginx custom, atau komponen infra lain yang menuntut akses SSH di Hostinger.
+- **DILARANG** menambahkan Redis, Celery, RabbitMQ, Kafka, Docker, Kubernetes, atau komponen infra lain tanpa konfirmasi eksplisit.
 - **DILARANG** mengganti yfinance dengan sumber data lain (misal IDX API resmi, Yahoo Finance REST, TradingView, Alpha Vantage) kecuali diminta eksplisit.
 - **DILARANG** memindahkan kalkulasi indikator ke SQL, stored procedure, view materialized, atau extension PostgreSQL (misal TimescaleDB aggregate).
 - **DILARANG** menggunakan Next.js, Vue, Svelte, Django, Flask, atau framework lain selain yang tercantum di tabel.
@@ -191,14 +192,15 @@ Timestamp disimpan dalam UTC di database. API mengirim ke frontend dalam ISO 860
 
 ---
 
-## 8. Batasan Deployment Hostinger
+## 8. Batasan Deployment
 
-- Deployment WAJIB selesai **hanya** melalui Hostinger GUI panel. Tidak ada SSH, tidak ada terminal.
-- **DILARANG** merancang langkah deploy yang menuntut `apt`, `systemctl`, `docker`, `pm2`, `supervisord`, atau perintah shell kustom di server.
-- Build frontend dilakukan **secara lokal** (`npm run build`), lalu folder hasil build diunggah lewat File Manager Hostinger.
-- Backend Python dijalankan melalui fitur Python App di panel Hostinger (atau setara); seluruh environment variable ditetapkan melalui UI panel.
-- Database PostgreSQL disediakan melalui fitur database di panel; kredensial diambil dari panel dan ditempel ke environment variable aplikasi.
-- Jika sebuah kebutuhan tidak bisa dipenuhi tanpa shell, agen WAJIB menghentikan pekerjaan dan melaporkan ke pemilik project sebelum memilih alternatif.
+- Frontend dideploy ke GitHub Pages.
+- Frontend WAJIB menggunakan `HashRouter` agar refresh route aman di GitHub Pages.
+- Backend Python FastAPI dideploy ke Railway.
+- Database production memakai Supabase PostgreSQL.
+- Seluruh environment variable backend diatur melalui Railway Variables.
+- Frontend hanya menerima URL backend melalui secret GitHub Actions `VITE_API_BASE_URL`.
+- Service role Supabase DILARANG dipakai di frontend.
 
 ---
 
@@ -221,6 +223,6 @@ Timestamp disimpan dalam UTC di database. API mengirim ke frontend dalam ISO 860
 - [ ] Apakah kode Python async dan bebas emoji?
 - [ ] Apakah kredensial dibaca dari environment variable?
 - [ ] Apakah label UI berbahasa Indonesia?
-- [ ] Apakah alur deployment masih bisa dikerjakan tanpa SSH?
+- [ ] Apakah alur deployment masih sesuai Supabase + Railway + GitHub Pages?
 
 Jika salah satu jawaban adalah "tidak", agen WAJIB berhenti, koreksi, atau minta konfirmasi sebelum melanjutkan.

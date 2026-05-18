@@ -7,8 +7,10 @@ dihentikan dengan pesan error yang menyebut nama variable.
 
 from __future__ import annotations
 
+import ssl
 from functools import lru_cache
 from typing import Optional
+from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 from pydantic import Field, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -93,15 +95,37 @@ class Settings(BaseSettings):
         if self.database_url_env:
             url = self.database_url_env
             if url.startswith("postgres://"):
-                return "postgresql+asyncpg://" + url.removeprefix("postgres://")
-            if url.startswith("postgresql://"):
-                return "postgresql+asyncpg://" + url.removeprefix("postgresql://")
-            return url
+                url = "postgresql+asyncpg://" + url.removeprefix("postgres://")
+            elif url.startswith("postgresql://"):
+                url = "postgresql+asyncpg://" + url.removeprefix("postgresql://")
+            return self._normalize_asyncpg_url(url)
 
         return (
             f"postgresql+asyncpg://{self.postgres_user}:{self.postgres_password}"
             f"@{self.postgres_host}:{self.postgres_port}/{self.postgres_db}"
         )
+
+    @staticmethod
+    def _normalize_asyncpg_url(url: str) -> str:
+        """Sesuaikan query URL Postgres umum agar cocok dengan SQLAlchemy asyncpg."""
+        parts = urlsplit(url)
+        query = [
+            (key, value)
+            for key, value in parse_qsl(parts.query, keep_blank_values=True)
+            if key != "sslmode"
+        ]
+        return urlunsplit((parts.scheme, parts.netloc, parts.path, urlencode(query), parts.fragment))
+
+    @property
+    def database_connect_args(self) -> dict[str, ssl.SSLContext]:
+        """Argumen koneksi tambahan untuk asyncpg."""
+        if self.database_url_env and "sslmode=require" in self.database_url_env:
+            ssl_context = ssl.create_default_context()
+            ssl_context.check_hostname = False
+            ssl_context.verify_mode = ssl.CERT_NONE
+            return {"ssl": ssl_context}
+
+        return {}
 
     @property
     def cors_origins_list(self) -> list[str]:
