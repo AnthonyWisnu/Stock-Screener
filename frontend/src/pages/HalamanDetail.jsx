@@ -24,9 +24,9 @@ function KartuIndikator({ label, nilai, format = 'des2', highlight }) {
       : nilai.toFixed(format === 'des4' ? 4 : 2)
   }
   return (
-    <div className="rounded-lg border border-gray-800/60 bg-[#13151f] px-3 py-2.5">
-      <div className="text-[11px] text-gray-500 uppercase tracking-wide mb-1">{label}</div>
-      <div className={`font-mono text-sm font-semibold tabular-nums ${highlight ?? 'text-gray-100'}`}>
+    <div className="rounded-xl border border-gray-800/60 bg-[#13151f] px-4 py-3.5">
+      <div className="text-xs text-gray-500 uppercase tracking-wide mb-1.5">{label}</div>
+      <div className={`font-mono text-lg font-bold tabular-nums ${highlight ?? 'text-gray-100'}`}>
         {tampil}
       </div>
     </div>
@@ -72,14 +72,14 @@ export default function HalamanDetail() {
 
   return (
     <div className="min-h-screen bg-[#0f1117]">
-      <div className="mx-auto max-w-6xl px-5 py-5">
+      <div className="w-full px-6 py-6">
 
         {/* ── Top bar: back + breadcrumb ── */}
-        <div className="flex items-center justify-between mb-5">
+        <div className="flex items-center justify-between mb-6">
           <button
             onClick={() => navigate('/')}
             className="inline-flex items-center gap-2 rounded-lg border border-gray-800
-                       bg-[#13151f] px-3 py-1.5 text-sm text-gray-300
+                       bg-[#13151f] px-4 py-2 text-sm text-gray-300
                        hover:bg-gray-800 hover:text-white transition-colors"
           >
             <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
@@ -88,7 +88,7 @@ export default function HalamanDetail() {
             Kembali
           </button>
 
-          <nav className="flex items-center gap-2 text-xs text-gray-600">
+          <nav className="flex items-center gap-2 text-sm text-gray-600">
             <button onClick={() => navigate('/')} className="hover:text-gray-400 transition-colors">
               Watchlist
             </button>
@@ -98,28 +98,28 @@ export default function HalamanDetail() {
         </div>
 
         {/* ── Header: nama + harga + range ── */}
-        <div className="flex flex-wrap items-start justify-between gap-4 mb-5">
+        <div className="flex flex-wrap items-start justify-between gap-4 mb-6">
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-extrabold text-white font-mono tracking-tight">{kode}</h1>
+              <h1 className="text-3xl font-extrabold text-white font-mono tracking-tight">{kode}</h1>
               {perubahanPersen != null && (
-                <span className={`inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-semibold
+                <span className={`inline-flex items-center gap-1 rounded-md px-2.5 py-1 text-sm font-semibold
                   ${naik ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}`}>
                   {naik ? '▲' : '▼'} {Math.abs(perubahanPersen).toFixed(2)}%
                 </span>
               )}
             </div>
             {data?.nama_perusahaan && (
-              <p className="mt-1 text-sm text-gray-500">{data.nama_perusahaan}</p>
+              <p className="mt-1.5 text-base text-gray-500">{data.nama_perusahaan}</p>
             )}
             {hargaTerakhir != null && (
-              <div className="mt-2 flex items-baseline gap-2">
-                <span className="text-3xl font-bold font-mono text-white tabular-nums">
+              <div className="mt-3 flex items-baseline gap-2.5">
+                <span className="text-4xl font-bold font-mono text-white tabular-nums">
                   {hargaTerakhir.toLocaleString('id-ID')}
                 </span>
-                <span className="text-sm text-gray-600">IDR</span>
+                <span className="text-base text-gray-600">IDR</span>
                 {perubahan != null && (
-                  <span className={`text-sm font-mono font-medium ${naik ? 'text-emerald-400' : 'text-red-400'}`}>
+                  <span className={`text-base font-mono font-medium ${naik ? 'text-emerald-400' : 'text-red-400'}`}>
                     {naik ? '+' : ''}{perubahan.toLocaleString('id-ID', { maximumFractionDigits: 0 })}
                   </span>
                 )}
@@ -134,7 +134,7 @@ export default function HalamanDetail() {
                 key={r.value}
                 onClick={() => setRange(r.value)}
                 aria-pressed={range === r.value}
-                className={`rounded-md px-3 py-1.5 text-xs font-semibold transition-colors min-w-[2.5rem]
+                className={`rounded-md px-4 py-2 text-sm font-semibold transition-colors min-w-[3rem]
                   ${range === r.value
                     ? 'bg-emerald-600 text-white'
                     : 'text-gray-500 hover:text-white hover:bg-gray-800'}`}
@@ -147,7 +147,7 @@ export default function HalamanDetail() {
 
         {/* ── Kartu indikator ── */}
         {last && (
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2.5 mb-5">
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3 mb-6">
             <KartuIndikator label="RSI 14" nilai={last.rsi_14} highlight={rsiWarna} />
             <KartuIndikator label="MACD" nilai={last.macd} format="des4" />
             <KartuIndikator label="Signal" nilai={last.macd_signal} format="des4" />
