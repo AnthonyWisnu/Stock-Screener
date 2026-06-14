@@ -6,21 +6,19 @@ export default {
   ],
   theme: {
     extend: {
-      colors: {
-        brand: {
-          50:  '#eff6ff',
-          100: '#dbeafe',
-          500: '#3b82f6',
-          600: '#2563eb',
-          700: '#1d4ed8',
-          900: '#1e3a8a',
-        },
-        naik:  '#16a34a',
-        turun: '#dc2626',
-      },
       fontFamily: {
         sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
         mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
+      },
+      colors: {
+        brand: {
+          DEFAULT: '#10b981',  // emerald-500
+        },
+      },
+      backgroundColor: {
+        base: '#0f1117',
+        card: '#13151f',
+        surface: '#1a1d27',
       },
     },
   },

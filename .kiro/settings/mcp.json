@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "v0": {
+      "command": "npx",
+      "args": [
+        "mcp-remote",
+        "https://mcp.v0.dev",
+        "--header",
+        "Authorization: Bearer TOKEN_V0_ANDA"
+      ],
+      "disabled": false
+    }
+  }
+}

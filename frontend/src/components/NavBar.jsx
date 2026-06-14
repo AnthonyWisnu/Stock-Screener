@@ -1,70 +1,36 @@
 import React, { useEffect, useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
 import { fetchStatus } from '../api/stocksClient.js'
 
-export default function NavBar() {
-  const { pathname } = useLocation()
-  const [status, setStatus] = useState(null)
+export default function NavBar({ pasarBuka }) {
+  const [waktu, setWaktu] = useState(new Date())
 
   useEffect(() => {
-    fetchStatus()
-      .then(setStatus)
-      .catch(() => setStatus({ status: 'offline' }))
-
-    const interval = setInterval(() => {
-      fetchStatus()
-        .then(setStatus)
-        .catch(() => setStatus({ status: 'offline' }))
-    }, 60_000)
-    return () => clearInterval(interval)
+    const id = setInterval(() => setWaktu(new Date()), 1000)
+    return () => clearInterval(id)
   }, [])
 
-  const online = status?.status === 'ok'
-  const pasarBuka = status?.pasar_buka === true
+  const tgl = waktu.toLocaleDateString('id-ID', {
+    weekday: 'short', day: '2-digit', month: 'short', year: 'numeric',
+  })
+  const jam = waktu.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
 
   return (
-    <header className="border-b border-gray-800 bg-gray-950 sticky top-0 z-50">
-      <div className="container mx-auto px-4 max-w-screen-2xl flex items-center justify-between h-14">
-        <Link
-          to="/"
-          className="flex items-center gap-2 font-semibold text-white hover:text-brand-500 transition-colors"
-        >
-          <span className="text-brand-500 font-bold text-lg">IDX</span>
-          <span className="text-gray-100">Stock Screener</span>
-        </Link>
+    <header className="flex items-center justify-between px-6 py-4">
+      {/* Logo + badge */}
+      <div className="flex items-center gap-3">
+        <span className="text-xl font-bold tracking-tight text-white">
+          Market<span className="text-emerald-400">Board</span>
+        </span>
+        <span className="live-badge">
+          <span className={`h-1.5 w-1.5 rounded-full ${pasarBuka ? 'bg-emerald-400 animate-pulse' : 'bg-gray-500'}`} />
+          {pasarBuka ? 'LIVE' : 'TUTUP'}
+        </span>
+      </div>
 
-        <div className="flex items-center gap-3">
-          {/* Status backend */}
-          {status && (
-            <div className="flex items-center gap-1.5 text-xs">
-              <span
-                className={`inline-block h-2 w-2 rounded-full ${
-                  online ? (pasarBuka ? 'bg-green-400 animate-pulse' : 'bg-green-600') : 'bg-red-500'
-                }`}
-              />
-              <span className={online ? 'text-gray-400' : 'text-red-400'}>
-                {online
-                  ? pasarBuka
-                    ? 'Pasar Buka'
-                    : 'Pasar Tutup'
-                  : 'Backend Offline'}
-              </span>
-            </div>
-          )}
-
-          <nav className="flex items-center gap-1">
-            <Link
-              to="/"
-              className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                pathname === '/'
-                  ? 'bg-gray-800 text-white'
-                  : 'text-gray-400 hover:text-white hover:bg-gray-800'
-              }`}
-            >
-              Screener
-            </Link>
-          </nav>
-        </div>
+      {/* Jam */}
+      <div className="text-right">
+        <div className="text-xs text-gray-500">{tgl}</div>
+        <div className="font-mono text-sm font-semibold text-gray-200">{jam}</div>
       </div>
     </header>
   )
