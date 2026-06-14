@@ -27,7 +27,7 @@ function RsiPill({ value }) {
     ? 'text-emerald-400 bg-emerald-500/10 border border-emerald-500/20'
     : 'text-gray-300'
   return (
-    <span className={`inline-block rounded px-1.5 py-0.5 font-mono text-xs tabular-nums ${cls}`}>
+    <span className={`inline-block rounded px-2 py-0.5 font-mono text-sm tabular-nums ${cls}`}>
       {value.toFixed(2)}
     </span>
   )
@@ -43,18 +43,18 @@ function SortIcon({ active, order }) {
 
 // Definisi kolom dengan lebar tetap agar tabel konsisten
 const COLS = [
-  { key: 'kode_saham',      label: 'Simbol',      w: 'w-[90px]',   align: 'left',  sortable: true },
-  { key: 'nama_perusahaan', label: 'Nama',         w: 'w-[160px]',  align: 'left',  sortable: false },
-  { key: 'harga_terakhir',  label: 'Harga',        w: 'w-[90px]',   align: 'right', sortable: true },
-  { key: 'rsi_14',          label: 'RSI 14',       w: 'w-[80px]',   align: 'right', sortable: true },
-  { key: 'macd',            label: 'MACD',         w: 'w-[90px]',   align: 'right', sortable: true },
-  { key: 'macd_signal',     label: 'Signal',       w: 'w-[90px]',   align: 'right', sortable: true },
-  { key: 'ema_50',          label: 'EMA 50',       w: 'w-[90px]',   align: 'right', sortable: true },
-  { key: 'ema_200',         label: 'EMA 200',      w: 'w-[90px]',   align: 'right', sortable: true },
-  { key: 'bb_upper',        label: 'BB Upper',     w: 'w-[90px]',   align: 'right', sortable: true },
-  { key: 'bb_lower',        label: 'BB Lower',     w: 'w-[90px]',   align: 'right', sortable: true },
-  { key: 'volume_ratio',    label: 'Vol. Ratio',   w: 'w-[80px]',   align: 'right', sortable: true },
-  { key: 'last_updated_at', label: 'Diperbarui',   w: 'w-[90px]',   align: 'right', sortable: true },
+  { key: 'kode_saham',      label: 'Simbol',      w: 'w-[100px]',  align: 'left',  sortable: true },
+  { key: 'nama_perusahaan', label: 'Nama',         w: 'w-[200px]',  align: 'left',  sortable: false },
+  { key: 'harga_terakhir',  label: 'Harga',        w: 'w-[100px]',  align: 'right', sortable: true },
+  { key: 'rsi_14',          label: 'RSI 14',       w: 'w-[90px]',   align: 'right', sortable: true },
+  { key: 'macd',            label: 'MACD',         w: 'w-[100px]',  align: 'right', sortable: true },
+  { key: 'macd_signal',     label: 'Signal',       w: 'w-[100px]',  align: 'right', sortable: true },
+  { key: 'ema_50',          label: 'EMA 50',       w: 'w-[100px]',  align: 'right', sortable: true },
+  { key: 'ema_200',         label: 'EMA 200',      w: 'w-[100px]',  align: 'right', sortable: true },
+  { key: 'bb_upper',        label: 'BB Upper',     w: 'w-[100px]',  align: 'right', sortable: true },
+  { key: 'bb_lower',        label: 'BB Lower',     w: 'w-[100px]',  align: 'right', sortable: true },
+  { key: 'volume_ratio',    label: 'Vol. Ratio',   w: 'w-[90px]',   align: 'right', sortable: true },
+  { key: 'last_updated_at', label: 'Diperbarui',   w: 'w-[100px]',  align: 'right', sortable: true },
 ]
 
 export default function TabelScreener({ items, loading, sortBy, sortOrder, onSort }) {
@@ -102,7 +102,7 @@ export default function TabelScreener({ items, loading, sortBy, sortOrder, onSor
                   key={col.key}
                   scope="col"
                   onClick={col.sortable ? () => onSort(col.key) : undefined}
-                  className={`px-3 py-3 text-[11px] font-semibold text-gray-500
+                  className={`px-4 py-3.5 text-xs font-semibold text-gray-500
                     uppercase tracking-wider whitespace-nowrap
                     ${col.align === 'right' ? 'text-right' : 'text-left'}
                     ${col.sortable ? 'cursor-pointer select-none hover:text-gray-300 transition-colors' : ''}`}
@@ -138,88 +138,88 @@ export default function TabelScreener({ items, loading, sortBy, sortOrder, onSor
                     ${i % 2 !== 0 ? 'bg-white/[0.012]' : ''}`}
                 >
                   {/* Simbol */}
-                  <td className="px-3 py-2.5">
-                    <div className="flex items-center gap-2">
-                      <span className={`h-1.5 w-1.5 shrink-0 rounded-full
+                  <td className="px-4 py-3.5">
+                    <div className="flex items-center gap-2.5">
+                      <span className={`h-2 w-2 shrink-0 rounded-full
                         ${tren ? 'bg-emerald-500' : 'bg-red-500'}`} />
-                      <span className="font-mono font-bold text-white text-xs tracking-wide">
+                      <span className="font-mono font-bold text-white text-sm tracking-wide">
                         {s.kode_saham}
                       </span>
                     </div>
                   </td>
 
                   {/* Nama */}
-                  <td className="px-3 py-2.5">
-                    <span className="text-gray-400 text-xs truncate block max-w-[150px]">
+                  <td className="px-4 py-3.5">
+                    <span className="text-gray-400 text-sm truncate block max-w-[190px]">
                       {s.nama_perusahaan ?? '—'}
                     </span>
                   </td>
 
                   {/* Harga */}
-                  <td className="px-3 py-2.5 text-right">
-                    <span className="font-mono font-semibold text-sm text-gray-100 tabular-nums">
+                  <td className="px-4 py-3.5 text-right">
+                    <span className="font-mono font-bold text-sm text-gray-100 tabular-nums">
                       <Nil>{fHarga(s.harga_terakhir)}</Nil>
                     </span>
                   </td>
 
                   {/* RSI */}
-                  <td className="px-3 py-2.5 text-right">
+                  <td className="px-4 py-3.5 text-right">
                     <RsiPill value={ind.rsi_14} />
                   </td>
 
                   {/* MACD */}
-                  <td className="px-3 py-2.5 text-right">
-                    <span className="font-mono text-xs text-gray-400 tabular-nums">
+                  <td className="px-4 py-3.5 text-right">
+                    <span className="font-mono text-sm text-gray-400 tabular-nums">
                       <Nil>{fDes4(ind.macd)}</Nil>
                     </span>
                   </td>
 
                   {/* Signal */}
-                  <td className="px-3 py-2.5 text-right">
-                    <span className="font-mono text-xs text-gray-400 tabular-nums">
+                  <td className="px-4 py-3.5 text-right">
+                    <span className="font-mono text-sm text-gray-400 tabular-nums">
                       <Nil>{fDes4(ind.macd_signal)}</Nil>
                     </span>
                   </td>
 
                   {/* EMA 50 */}
-                  <td className="px-3 py-2.5 text-right">
-                    <span className="font-mono text-xs text-gray-400 tabular-nums">
+                  <td className="px-4 py-3.5 text-right">
+                    <span className="font-mono text-sm text-gray-400 tabular-nums">
                       <Nil>{fHarga(ind.ema_50)}</Nil>
                     </span>
                   </td>
 
                   {/* EMA 200 */}
-                  <td className="px-3 py-2.5 text-right">
-                    <span className="font-mono text-xs text-gray-400 tabular-nums">
+                  <td className="px-4 py-3.5 text-right">
+                    <span className="font-mono text-sm text-gray-400 tabular-nums">
                       <Nil>{fHarga(ind.ema_200)}</Nil>
                     </span>
                   </td>
 
                   {/* BB Upper */}
-                  <td className="px-3 py-2.5 text-right">
-                    <span className="font-mono text-xs text-gray-400 tabular-nums">
+                  <td className="px-4 py-3.5 text-right">
+                    <span className="font-mono text-sm text-gray-400 tabular-nums">
                       <Nil>{fHarga(ind.bb_upper)}</Nil>
                     </span>
                   </td>
 
                   {/* BB Lower */}
-                  <td className="px-3 py-2.5 text-right">
-                    <span className="font-mono text-xs text-gray-400 tabular-nums">
+                  <td className="px-4 py-3.5 text-right">
+                    <span className="font-mono text-sm text-gray-400 tabular-nums">
                       <Nil>{fHarga(ind.bb_lower)}</Nil>
                     </span>
                   </td>
 
                   {/* Vol. Ratio */}
-                  <td className="px-3 py-2.5 text-right">
-                    <span className={`font-mono text-xs tabular-nums
+                  <td className="px-4 py-3.5 text-right">
+                    <span className={`font-mono text-sm tabular-nums
                       ${volSpike ? 'text-amber-400 font-semibold' : 'text-gray-400'}`}>
                       <Nil>{fDes2(ind.volume_ratio)}</Nil>
                     </span>
                   </td>
 
                   {/* Diperbarui */}
-                  <td className="px-3 py-2.5 text-right">
-                    <span className="text-[11px] text-gray-600 whitespace-nowrap">
+                  <td className="px-4 py-3.5 text-right">
+                    <span className="text-xs text-gray-600 whitespace-nowrap">
                       {waktuRelatif(s.last_updated_at)}
                     </span>
                   </td>
