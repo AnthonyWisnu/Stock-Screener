@@ -26,7 +26,6 @@ export default function HalamanDaftar() {
     return () => clearInterval(id)
   }, [])
 
-  // Filter simbol/nama di sisi klien (tidak kirim ke backend)
   const itemsTampil = cari.trim()
     ? items.filter(s =>
         s.kode_saham.toLowerCase().includes(cari.toLowerCase()) ||
@@ -36,31 +35,21 @@ export default function HalamanDaftar() {
 
   return (
     <div className="min-h-screen bg-[#0f1117] flex flex-col">
-      {/* Header */}
       <NavBar pasarBuka={pasarBuka} />
 
-      {/* Body: dua kolom */}
-      <div className="flex-1 flex gap-5 px-5 pb-8 min-h-0">
-
-        {/* ── Kolom kiri: Watchlist ── */}
-        <div className="flex-1 min-w-0 flex flex-col gap-3">
-
-          {/* Judul + subtitle */}
-          <div className="flex items-end justify-between">
-            <div>
-              <h1 className="text-base font-bold text-white leading-tight">Watchlist</h1>
-              <p className="text-[11px] text-gray-600 mt-0.5">
-                Diperbarui setiap 5 menit · Jam bursa 09:00–16:00 WIB
-              </p>
-            </div>
+      <main className="flex-1 mx-auto w-full max-w-[1400px] px-5 py-5">
+        {/* ── Header bar (full width) ── */}
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+          <div>
+            <h1 className="text-lg font-bold text-white leading-tight">Watchlist</h1>
+            <p className="text-[11px] text-gray-600 mt-0.5">
+              Diperbarui setiap 5 menit · Jam bursa 09:00–16:00 WIB
+            </p>
           </div>
 
-          {/* Toolbar: search + refresh */}
           <div className="flex items-center gap-2">
-            {/* Search */}
             <div className="relative">
-              <svg className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2
-                              h-3.5 w-3.5 text-gray-600"
+              <svg className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-600"
                 viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
               </svg>
@@ -72,48 +61,37 @@ export default function HalamanDaftar() {
                 className="input-field pl-8 text-xs py-1.5 w-52"
               />
             </div>
-
-            {/* Tombol Perbarui */}
-            <button
-              onClick={refresh}
-              disabled={loading}
-              className="btn-ghost text-xs py-1.5 gap-1.5"
-            >
-              <svg className={`h-3.5 w-3.5 ${loading ? 'animate-spin' : ''}`}
-                viewBox="0 0 20 20" fill="currentColor">
+            <button onClick={refresh} disabled={loading} className="btn-ghost text-xs py-1.5 gap-1.5">
+              <svg className={`h-3.5 w-3.5 ${loading ? 'animate-spin' : ''}`} viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clipRule="evenodd" />
               </svg>
               Perbarui
             </button>
           </div>
-
-          {/* Filter indikator (collapsible) */}
-          <KontrolFilter onFilter={handleFilter} loading={loading} />
-
-          {/* Pesan error */}
-          {error && <PesanError pesan={error} />}
-
-          {/* Tabel */}
-          <TabelScreener
-            items={itemsTampil}
-            loading={loading}
-            sortBy={sortBy}
-            sortOrder={sortOrder}
-            onSort={handleSort}
-          />
-
-          {/* Paginasi */}
-          <Paginasi paginasi={paginasi} onPage={handlePage} />
         </div>
 
-        {/* ── Kolom kanan: Top Movers (sticky) ── */}
-        <div className="w-60 shrink-0">
-          <div className="sticky top-4 pt-12 space-y-4">
-            <TopMovers items={items} />
+        {/* ── Konten dua kolom (start sejajar) ── */}
+        <div className="flex gap-5 items-start">
+          {/* Kiri */}
+          <div className="flex-1 min-w-0 flex flex-col gap-3">
+            <KontrolFilter onFilter={handleFilter} loading={loading} />
+            {error && <PesanError pesan={error} />}
+            <TabelScreener
+              items={itemsTampil}
+              loading={loading}
+              sortBy={sortBy}
+              sortOrder={sortOrder}
+              onSort={handleSort}
+            />
+            <Paginasi paginasi={paginasi} onPage={handlePage} />
           </div>
-        </div>
 
-      </div>
+          {/* Kanan */}
+          <aside className="w-64 shrink-0">
+            <TopMovers items={items} />
+          </aside>
+        </div>
+      </main>
     </div>
   )
 }
